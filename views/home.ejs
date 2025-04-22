@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Library Management System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            padding: 20px;
+        }
+        .form-control, .btn {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center mb-4">📚 Library Management System</h1>
+
+        <!-- Search Bar -->
+        <div class="mb-4">
+            <input class="form-control" type="text" id="searchInput" placeholder="Search by book name or author">
+        </div>
+
+        <!-- Book Table -->
+        <h2>All Books</h2>
+        <table class="table table-bordered table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>Book Name</th>
+                    <th>Author</th>
+                    <th>Pages</th>
+                    <th>Price</th>
+                    <th>Status</th>
+                    <th>Issue</th>
+                    <th>Return</th>
+                    <th>Delete</th>
+                </tr>
+            </thead>
+            <tbody id="bookTable">
+                <% data.forEach(element => { %>
+                <tr>
+                    <td><%= element.bookName %></td>
+                    <td><%= element.bookAuthor %></td>
+                    <td><%= element.bookPages %></td>
+                    <td>₹<%= element.bookPrice %></td>
+                    <td><%= element.bookState %></td>
+                    <td>
+                        <% if (element.bookState === "Available") { %>
+                        <form action="/issue" method="post">
+                            <input type="hidden" name="bookName" value="<%= element.bookName %>">
+                            <button type="submit" class="btn btn-warning btn-sm">Issue</button>
+                        </form>
+                        <% } %>
+                    </td>
+                    <td>
+                        <% if (element.bookState === "Issued") { %>
+                        <form action="/return" method="post">
+                            <input type="hidden" name="bookName" value="<%= element.bookName %>">
+                            <button type="submit" class="btn btn-success btn-sm">Return</button>
+                        </form>
+                        <% } %>
+                    </td>
+                    <td>
+                        <form action="/delete" method="post">
+                            <input type="hidden" name="bookName" value="<%= element.bookName %>">
+                            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                <% }); %>
+            </tbody>
+        </table>
+
+        <!-- Add Book Form -->
+        <h2 class="mt-5">Add a New Book</h2>
+        <form action="/" method="post" class="row g-3">
+            <div class="col-md-6">
+                <input type="text" class="form-control" placeholder="Book Name" name="bookName" required>
+            </div>
+            <div class="col-md-6">
+                <input type="text" class="form-control" placeholder="Author" name="bookAuthor" required>
+            </div>
+            <div class="col-md-4">
+                <input type="number" class="form-control" placeholder="Pages" name="bookPages" required>
+            </div>
+            <div class="col-md-4">
+                <input type="number" class="form-control" placeholder="Price" name="bookPrice" required>
+            </div>
+            <div class="col-md-4 d-grid">
+                <button type="submit" class="btn btn-primary">Add Book</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- JavaScript for Search -->
+    <script>
+        const searchInput = document.getElementById('searchInput');
+        searchInput.addEventListener('input', () => {
+            const filter = searchInput.value.toLowerCase();
+            const rows = document.querySelectorAll('#bookTable tr');
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(filter) ? '' : 'none';
+            });
+        });
+    </script>
+</body>
+</html>
+
